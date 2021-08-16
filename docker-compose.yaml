@@ -23,9 +23,6 @@ services:
         environment:
             POSTGRES_URI: postgres://user:password@postgres:5432/perndemo
             REDIS_URI: redis://redis:6379
-        links:
-            - postgres
-            - redis
         volumes:
             - ./api:/app/api
         networks:
