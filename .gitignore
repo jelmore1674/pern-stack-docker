@@ -1,8 +1,8 @@
 # Node Modules
-node_modules/
+*node_modules/*
 
 # Environmnet Variables
 .env
 
 # DATABASE
-pgdata/
+*pgdata/*
