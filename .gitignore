@@ -6,3 +6,6 @@
 .env
 /client/.env
 /api/.env
+
+# DATABASE
+/postgres/pgdata/
