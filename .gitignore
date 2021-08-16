@@ -1,11 +1,11 @@
 # Node Modules
-./client/node_modules/
-./app/node_modules/
+client/node_modules/
+app/node_modules/
 
 # Environmnet Variables
 .env
-./client/.env
-./api/.env
+client/.env
+api/.env
 
 # DATABASE
-./postgres/pgdata/
+postgres/pgdata/
