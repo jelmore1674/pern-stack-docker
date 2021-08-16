@@ -1,0 +1,58 @@
+version: '3.3'
+services:
+    # FrontEnd React
+    web:
+        container_name: client
+        build: ./client
+        working_dir: /app/client
+        command: npm start
+        ports:
+            - 6500:3000
+        volumes:
+            - ./client:/app/client
+        networks:
+            - pernapp
+    # Node Backend
+    backend:
+        container_name: backend
+        build: ./api
+        working_dir: /app/api
+        command: npm start
+        ports:
+            - 3004:5000
+        environment:
+            POSTGRES_URI: postgres://user:password@postgres:5432/perndemo
+            REDIS_URI: redis://redis:6379
+        links:
+            - postgres
+            - redis
+        volumes:
+            - ./api:/app/api
+        networks:
+            - pernapp
+        depends_on:
+            - postgres
+    # Postgres DB
+    postgres:
+        environment:
+            POSTGRES_USER: user
+            POSTGRES_PASSWORD: password
+            POSTGRES_DB: perndemo
+            POSTGRES_HOST: postgres
+        build: ./postgres
+        volumes:
+            - ./postgres/pgdata:/var/lib/postgresql/data
+        ports:
+            - '5431:5432'
+        networks:
+            - pernapp
+        # Redis
+    redis:
+        image: redis
+        ports:
+            - '6379:6379'
+        networks:
+            - pernapp
+networks:
+    pernapp:
+        driver: bridge
