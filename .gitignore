@@ -8,4 +8,4 @@
 /api/.env
 
 # DATABASE
-/postgres/pgdata/
+/postgres/pgdata
