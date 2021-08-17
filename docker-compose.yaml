@@ -21,21 +21,23 @@ services:
         ports:
             - 3004:5000
         environment:
-            POSTGRES_URI: postgres://user:password@postgres:5432/perndemo
-            REDIS_URI: redis://redis:6379
+            POSTGRES_URI: ${PG_URI}
+            REDIS_URI: ${REDIS_URL}
         volumes:
             - ./api:/app/api
+            - /app/api/node_modules/
         networks:
             - pernapp
         depends_on:
             - postgres
+
     # Postgres DB
     postgres:
         environment:
-            POSTGRES_USER: user
-            POSTGRES_PASSWORD: password
-            POSTGRES_DB: perndemo
-            POSTGRES_HOST: postgres
+            POSTGRES_USER: ${PG_USER}
+            POSTGRES_PASSWORD: ${PG_PASS}
+            POSTGRES_DB: ${PG_DB}
+            POSTGRES_HOST: ${PG_HOST}
         build: ./postgres
         volumes:
             - ./postgres/pgdata:/var/lib/postgresql/data
