@@ -16,4 +16,25 @@ module.exports = {
             .where('email', '=', email);
         return user;
     },
+    createUser: async(email, password, name) => {
+        const hash = await bcrypt.hashSync(password);
+        try {
+            await db.transaction(async(trx) => {
+                const loginEmail = await trx
+                    .insert({
+                        hash: hash,
+                        email: email,
+                    })
+                    .into('login')
+                    .returning('email');
+                const newUser = await trx('users').returning('*').insert({
+                    email: loginEmail[0],
+                    name: name,
+                    joined: new Date(),
+                });
+            });
+        } catch (err) {
+            res.stauts(400).json(err);
+        }
+    },
 };
