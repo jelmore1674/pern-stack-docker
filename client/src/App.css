@@ -36,3 +36,18 @@
         transform: rotate(360deg);
     }
 }
+
+.image {
+    padding-top: 2rem;
+    overflow: hidden;
+}
+
+.image img {
+    min-width: 128px;
+    max-width: 128px;
+    max-width: 128px;
+    max-height: 128px;
+    object-fit: cover;
+    object-position: center;
+    border-radius: 50%;
+}

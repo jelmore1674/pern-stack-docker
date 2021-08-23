@@ -1,83 +1,78 @@
-import React, { useState } from 'react';
-import logo from './logo.svg';
-import axios from 'axios';
+import React, { useState, useEffect } from 'react';
+import {
+	BrowserRouter as Router,
+	Switch,
+	Route,
+	Link,
+	Redirect,
+} from 'react-router-dom';
+import Dashboard from './components/Dashboard/Dashboard';
+import { handleToken } from './utils/handleToken/handleToken';
+import SignIn from './components/signin';
+import SignUp from './components/SignUp/signup';
 import './App.css';
 
 function App() {
-	const [selectedFile, setSelectedFile] = useState();
-	const [isFilePicked, setIsFilePicked] = useState(false);
-	const [fileTitle, setFileTitle] = useState('');
+	const [user, setUserData] = useState('');
 
-	const instance = axios.create({
-		baseURL: 'http://localhost:3400',
-	});
+	const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-	const changeHandler = (event) => {
-		setSelectedFile(event.target.files[0]);
-		setIsFilePicked(true);
-	};
+	useEffect(() => {
+		const token = window.sessionStorage.getItem('token');
 
-	const handleChange = (event) => {
-		setFileTitle(event.target.value);
-	};
-
-	React.useEffect(() => {
-		fetch('http://localhost:3004/api')
-			.then((response) => response.json())
-			.then((data) => console.log(data));
+		if (token) {
+			const loadUser = async () => {
+				const user = await handleToken(token);
+				setUserData(user);
+				setIsLoggedIn(true);
+			};
+			loadUser();
+			<Redirect to='/userData' />;
+		}
 	}, []);
 
-	async function handleImageUpload(e) {
-		e.preventDefault();
-		const formData = new FormData();
-		formData.append('file', selectedFile);
-		formData.append('title', fileTitle);
-		try {
-			const response = await axios.post(
-				'http://localhost:3004/upload/',
-				formData
-			);
-			console.log(response);
-		} catch (err) {
-			console.log(err);
-		}
-	}
+	const handleSignOut = () => {
+		window.sessionStorage.removeItem('token');
+		setIsLoggedIn(false);
+		setUserData('');
+	};
+
 	return (
-		<div className='App'>
-			<header className='App-header'>
-				<img src={logo} className='App-logo' alt='logo' />
-				<p>
-					Edit <code> src / App.js </code> and shit happens today
-				</p>
-				<a
-					className='App-link'
-					href='https://reactjs.org'
-					target='_blank'
-					rel='noopener noreferrer'>
-					Learn React
-				</a>
-			</header>
-			<form onSubmit={handleImageUpload}>
-				<div>
-					<label htmlFor='Title'>Title</label>
-					<input
-						type='text'
-						placeholder='title'
-						value={fileTitle}
-						onChange={handleChange}
-					/>
-				</div>
-				<div>
-					<input
-						type='file'
-						name='image'
-						id='image'
-						onChange={changeHandler}
-					/>
-				</div>
-				<button>Submit</button>
-			</form>
-		</div>
+		<Router className='App'>
+			<Switch>
+				<Route path='/login'>
+					{!isLoggedIn ? (
+						<SignIn
+							setUserData={setUserData}
+							setIsLoggedIn={setIsLoggedIn}
+						/>
+					) : (
+						<Redirect to='/userDash' />
+					)}
+				</Route>
+				<Route exact path='/userDash'>
+					{isLoggedIn ? (
+						<Dashboard
+							user={user}
+							setUserData={setUserData}
+							handleSignOut={handleSignOut}
+						/>
+					) : (
+						<Redirect to='/login' />
+					)}
+				</Route>
+				<Route path='/signup'>
+					<SignUp />
+				</Route>
+				<Route path='/'>
+					{!isLoggedIn ? (
+						<Redirect to='/login' />
+					) : (
+						<Redirect to='/userData' />
+					)}
+				</Route>
+			</Switch>
+		</Router>
 	);
 }
 

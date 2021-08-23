@@ -10,11 +10,16 @@ module.exports = {
         const user = await db.select('*').from('users').where('id', '=', id);
         return user[0];
     },
+    getSingleUserByEmail: async(email) => {
+        const user = await db.select('*').from('users').where('email', email);
+        return user[0];
+    },
+
     getUserByEmail: async(email) => {
         const user = await db('login')
             .select('email', 'hash')
             .where('email', '=', email);
-        return user;
+        return user[0];
     },
     createUser: async(email, password, name) => {
         const hash = await bcrypt.hashSync(password);
@@ -26,15 +31,26 @@ module.exports = {
                         email: email,
                     })
                     .into('login')
-                    .returning('email');
-                const newUser = await trx('users').returning('*').insert({
-                    email: loginEmail[0],
-                    name: name,
-                    joined: new Date(),
-                });
+                    .returning('email')
+                    .transacting(trx);
+                const newUser = await trx('users')
+                    .returning('*')
+                    .insert({
+                        email: loginEmail[0],
+                        name: name,
+                        joined: new Date(),
+                    })
+                    .transacting(trx);
             });
         } catch (err) {
             res.stauts(400).json(err);
         }
+    },
+    changeAvatar: async(id, imageUrl) => {
+        const user = await db('users')
+            .update({ imageurl: imageUrl })
+            .where('id', id)
+            .returning('*');
+        return user[0];
     },
 };

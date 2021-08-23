@@ -5,12 +5,10 @@ const app = express();
 const path = require('path');
 const homeRouter = require('./routes/home');
 const uploadRouter = require('./routes/upload');
-
-const use = (fn) => (req, res, next) => {
-    Promise.resolve(fn(req, res, next).catch(next));
-};
+const profileRoute = require('./routes/profile');
+app.use(express.static(path.join(__dirname, 'public')));
 app.use(
-    'uploads/images',
+    '/uploads/images',
     express.static(path.join(__dirname, 'uploads/images'))
 );
 
@@ -18,7 +16,9 @@ app.use(express.json());
 app.use(cors());
 app.use(morgan('combined'));
 
-app.use('/api', homeRouter);
+app.use('/', homeRouter);
+
+app.use('/profile', profileRoute);
 
 app.use('/upload', uploadRouter);
 

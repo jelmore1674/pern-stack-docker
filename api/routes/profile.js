@@ -6,7 +6,7 @@ const app = express();
 
 const fileStorage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, 'avatars');
+        cb(null, 'uploads/images');
     },
     filename: (req, file, cb) => {
         cb(null, new Date().toISOString() + file.originalname);
@@ -17,6 +17,6 @@ const upload = multer({ storage: fileStorage });
 
 const uploadController = require('../controllers/uploadHandler');
 
-router.post('/', upload.single('file'), uploadController.uploadImage);
+router.post('/:id', upload.single('file'), uploadController.changeAvatar);
 
 module.exports = router;
