@@ -42,28 +42,15 @@ module.exports = {
         if (!email || !password) {
             return Promise.reject('incorrect form submission');
         }
-        try {
-            const data = await userModel.getUserByEmail(email);
-
-            if (data) {
-                const isValid = await bcrypt.compareSync(password, data.hash);
-                if (isValid) {
-                    try {
-                        const user = await userModel.getSingleUserByEmail(
-                            email
-                        );
-                        return user;
-                    } catch (err) {
-                        Promise.reject('error on await getSingleUserByEmail');
-                    }
-                } else {
-                    return Promise.reject('Wrong Credentials');
-                }
-            } else {
-                Promise.reject('no data.id');
+        const data = await userModel.getUserByEmail(email);
+        if (data) {
+            const isValid = await bcrypt.compareSync(password, data.hash);
+            if (isValid) {
+                const user = await userModel.getSingleUserByEmail(email);
+                return user;
             }
-        } catch (err) {
-            Promise.reject('unable to get user');
+        } else {
+            return Promise.reject('Wrong Credentials');
         }
     },
 };

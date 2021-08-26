@@ -13,7 +13,7 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import { Link as ReactLink } from 'react-router-dom';
-
+import Alert from '@material-ui/lab/Alert';
 function Copyright() {
 	return (
 		<Typography variant='body2' color='textSecondary' align='center'>
@@ -51,6 +51,8 @@ export default function SignIn({ setUserData, setIsLoggedIn }) {
 	const classes = useStyles();
 	const [loginEmail, setLoginEmail] = useState('');
 	const [loginPass, setLoginPass] = useState('');
+	const [loginError, setLoginError] = useState(false);
+	const [errorMessage, setErrorMessage] = useState('');
 
 	const saveAuthTokenInSession = (token) => {
 		window.sessionStorage.setItem('token', token);
@@ -58,6 +60,8 @@ export default function SignIn({ setUserData, setIsLoggedIn }) {
 
 	async function handleLogin(event) {
 		event.preventDefault();
+		setLoginError(false);
+		setErrorMessage('');
 		const response = await fetch('http://localhost:3004/login', {
 			method: 'post',
 			headers: { 'Content-Type': 'application/json' },
@@ -80,12 +84,14 @@ export default function SignIn({ setUserData, setIsLoggedIn }) {
 				}
 			);
 			const user = await response.json();
-			console.log(user);
 
 			if (user.id && user.email) {
 				setUserData(user);
 				setIsLoggedIn(true);
 			}
+		} else {
+			setLoginError(true);
+			setErrorMessage(data);
 		}
 	}
 
@@ -107,6 +113,11 @@ export default function SignIn({ setUserData, setIsLoggedIn }) {
 				<Typography component='h1' variant='h5'>
 					Sign in
 				</Typography>
+				{loginError && (
+					<Alert variant='filled' severity='error'>
+						{errorMessage}
+					</Alert>
+				)}
 				<form
 					className={classes.form}
 					noValidate

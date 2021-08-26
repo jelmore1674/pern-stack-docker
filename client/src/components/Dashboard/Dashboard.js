@@ -22,6 +22,9 @@ import { mainListItems, secondaryListItems } from './listItems';
 import Chart from './Chart';
 import Deposits from './Deposits';
 import Tickets from './Orders';
+import Avatar from '@material-ui/core/Avatar';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
 
 function Copyright() {
 	return (
@@ -76,6 +79,10 @@ const useStyles = makeStyles((theme) => ({
 	title: {
 		flexGrow: 1,
 	},
+	avatar: {
+		margin: theme.spacing(1),
+		backgroundColor: theme.palette.secondary.main,
+	},
 	drawerPaper: {
 		position: 'relative',
 		whiteSpace: 'nowrap',
@@ -120,6 +127,15 @@ const useStyles = makeStyles((theme) => ({
 export default function Dashboard({ user, handleSignOut, setUserData }) {
 	const classes = useStyles();
 	const [open, setOpen] = React.useState(true);
+	const [anchorEl, setAnchorEl] = React.useState(null);
+
+	const handleClick = (event) => {
+		setAnchorEl(event.currentTarget);
+	};
+
+	const handleClose = () => {
+		setAnchorEl(null);
+	};
 	const handleDrawerOpen = () => {
 		setOpen(true);
 	};
@@ -127,7 +143,7 @@ export default function Dashboard({ user, handleSignOut, setUserData }) {
 		setOpen(false);
 	};
 	const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
-
+	const imageUrl = user.imageurl;
 	return (
 		<div className={classes.root}>
 			<CssBaseline />
@@ -154,14 +170,36 @@ export default function Dashboard({ user, handleSignOut, setUserData }) {
 						className={classes.title}>
 						Dashboard
 					</Typography>
+					<Typography
+						component='h1'
+						variant='h6'
+						color='inherit'
+						noWrap
+						className={classes.title}>
+						{`Welcome, ${user.name}`}
+					</Typography>
 					<IconButton color='inherit'>
 						<Badge badgeContent={4} color='secondary'>
 							<NotificationsIcon />
 						</Badge>
 					</IconButton>
-					<IconButton color='inherit' onClick={handleSignOut}>
-						<p> Sign Out</p>
-					</IconButton>
+					<Avatar
+						onClick={handleClick}
+						alt={user.name}
+						src={`http://localhost:3004/${imageUrl}`}
+					/>
+					<Menu
+						id='simple-menu'
+						anchorEl={anchorEl}
+						keepMounted
+						open={Boolean(anchorEl)}
+						onClose={handleClose}>
+						<MenuItem onClick={handleClose}>Profile</MenuItem>
+						<MenuItem onClick={handleClose}>My account</MenuItem>
+						<MenuItem onClick={(handleClose, handleSignOut)}>
+							Logout
+						</MenuItem>
+					</Menu>
 				</Toolbar>
 			</AppBar>
 			<Drawer

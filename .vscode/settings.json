@@ -1,0 +1,14 @@
+{
+	"sqltools.connections": [
+		{
+			"previewLimit": 50,
+			"server": "localhost",
+			"port": 5431,
+			"driver": "PostgreSQL",
+			"name": "pernDocker",
+			"database": "perndemo",
+			"username": "user",
+			"password": "password"
+		}
+	]
+}

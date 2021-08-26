@@ -25,8 +25,10 @@ function App() {
 				const user = await handleToken(token);
 				setUserData(user);
 				setIsLoggedIn(true);
+				console.log(user);
 			};
 			loadUser();
+
 			<Redirect to='/userData' />;
 		}
 	}, []);
@@ -41,6 +43,7 @@ function App() {
 		<Router className='App'>
 			<Switch>
 				<Route path='/login'>
+					{' '}
 					{!isLoggedIn ? (
 						<SignIn
 							setUserData={setUserData}
@@ -48,9 +51,10 @@ function App() {
 						/>
 					) : (
 						<Redirect to='/userDash' />
-					)}
-				</Route>
+					)}{' '}
+				</Route>{' '}
 				<Route exact path='/userDash'>
+					{' '}
 					{isLoggedIn ? (
 						<Dashboard
 							user={user}
@@ -59,19 +63,20 @@ function App() {
 						/>
 					) : (
 						<Redirect to='/login' />
-					)}
-				</Route>
+					)}{' '}
+				</Route>{' '}
 				<Route path='/signup'>
 					<SignUp />
-				</Route>
+				</Route>{' '}
 				<Route path='/'>
+					{' '}
 					{!isLoggedIn ? (
 						<Redirect to='/login' />
 					) : (
 						<Redirect to='/userData' />
-					)}
-				</Route>
-			</Switch>
+					)}{' '}
+				</Route>{' '}
+			</Switch>{' '}
 		</Router>
 	);
 }

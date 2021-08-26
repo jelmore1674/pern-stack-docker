@@ -1,4 +1,5 @@
 const db = require('./knex').db;
+const bcrypt = require('bcrypt');
 
 module.exports = {
     getAllUsers: async() => {
@@ -22,9 +23,9 @@ module.exports = {
         return user[0];
     },
     createUser: async(email, password, name) => {
-        const hash = await bcrypt.hashSync(password);
+        const hash = await bcrypt.hashSync(password, 10);
         try {
-            await db.transaction(async(trx) => {
+            const registerUser = await db.transaction(async(trx) => {
                 const loginEmail = await trx
                     .insert({
                         hash: hash,
@@ -38,12 +39,15 @@ module.exports = {
                     .insert({
                         email: loginEmail[0],
                         name: name,
-                        joined: new Date(),
+                        imageurl: 'uploads/images/default.png',
                     })
                     .transacting(trx);
+                return newUser[0];
             });
+
+            return registerUser;
         } catch (err) {
-            res.stauts(400).json(err);
+            return err;
         }
     },
     changeAvatar: async(id, imageUrl) => {

@@ -15,6 +15,6 @@ module.exports = {
             params: { id },
         } = req;
         const user = await userModel.changeAvatar(id, file.path);
-        res.json(user);
+        res.status(201).json(user);
     },
 };
